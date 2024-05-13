@@ -1,10 +1,6 @@
-import path from "node:path";
-
 const defaultOptions = {
-  globalHandler: "global-server-error.js",
+  globalHandler: "global-server-error",
 };
-
-const loaderPath = path.resolve("loader.js");
 
 export function rscErrorHandler(options = {}) {
   return function withLoader(nextConfig = {}) {
@@ -12,8 +8,8 @@ export function rscErrorHandler(options = {}) {
       ...nextConfig,
       webpack(config, opts) {
         config.module.rules.unshift({
-          test: /(page|layout)\.(t|j)sx?$/,
-          include: /\/app\//,
+          test: /\.(t|j)sx?$/, // TODO probably get extensions from next config ?
+          exclude: /\/(node_modules|packages\/next-rsc-error-handler)\//, // FIXME packages are only excluded for testing purposes
           use: [
             {
               loader: "next-rsc-error-handler/src/loader.js",

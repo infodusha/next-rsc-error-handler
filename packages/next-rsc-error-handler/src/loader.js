@@ -6,17 +6,20 @@ import generate from "@babel/generator";
 import * as t from "@babel/types";
 
 import {
-  containsServerActions,
   getRelativePath,
   isClientComponent,
   isReactElement,
-  isServerAction,
   wrapWithFunction,
+  getExistingFilePath,
 } from "./utils.js";
+
+const EXTENSIONS = ["js", "jsx", "ts", "tsx", "mjs", "mts"]; // TODO get extensions from next config
+
+const WRAPPER_NAME = "__rscWrapper";
+const WRAPPER_PATH = "next-rsc-error-handler/src/wrapper.js";
 
 export default function (source) {
   const options = this.getOptions();
-  //   const callback = this.async();
 
   if (isClientComponent(source)) {
     return source;
@@ -24,8 +27,12 @@ export default function (source) {
 
   const resourcePath = this.resourcePath;
 
-  const globalHandlerPath = path.resolve("app", options.globalHandler);
-  this.addDependency(globalHandlerPath);
+  const globalHandler = getExistingFilePath(
+    path.resolve("app", options.globalHandler),
+    EXTENSIONS
+  );
+
+  this.addDependency(globalHandler);
 
   const ast = parse(source, {
     sourceType: "module",
@@ -36,79 +43,61 @@ export default function (source) {
   let wasWrapped = false;
 
   traverse.default(ast, {
-    enter(path) {
-      if (path.isImportDeclaration()) {
-        const importPath = path.node.source.value;
-        if (importPath === "next-rsc-error-handler") {
+    enter(p) {
+      if (p.isImportDeclaration()) {
+        const importPath = p.node.source.value;
+        if (importPath.includes(WRAPPER_PATH)) {
           shouldAddImport = false;
         }
       }
 
-      if (!path.isFunctionDeclaration() && !path.isArrowFunctionExpression()) {
+      if (!p.isFunctionDeclaration() && !p.isArrowFunctionExpression()) {
         return;
       }
 
-      const functionName = path.isFunctionDeclaration()
-        ? path.node.id?.name
-        : path.parentPath?.isVariableDeclarator() &&
-          path.parentPath.node.id.type === "Identifier"
-        ? path.parentPath.node.id?.name
-        : "unknown";
+      if (!isReactElement(p)) {
+        return;
+      }
 
-      const buildContext = {
-        buildId: options.buildId,
-        dev: options.dev,
-        nextRuntime: options.nextRuntime,
+      const ctx = {
         filePath: getRelativePath(resourcePath),
-        kind: options.kind,
-        workspaceId: options.workspaceId,
-        functionName,
+        functionName: getFunctionName(p),
       };
 
-      let shouldWrap = true; // FIXME should be false ??
-
-      if (buildContext.kind === "page-component" && isReactElement(path)) {
-        shouldWrap = true;
-      }
-
-      if (buildContext.kind === "server-component" && isReactElement(path)) {
-        shouldWrap = true;
-      }
-
-      if (
-        buildContext.kind === "server-action" &&
-        containsServerActions(source) && // TODO: refactor, remove or move to top
-        isServerAction(path)
-      ) {
-        // TODO: inline server actions have names like $$ACTION_0, $$ACTION_1, etc.
-        // we should set a human readable name
-        shouldWrap = true;
-      }
-
-      if (!shouldWrap) {
-        return;
-      }
-
       wasWrapped = true;
-      wrapWithFunction(path, "__rscWrapper", buildContext);
-      path.skip();
+      wrapWithFunction(p, WRAPPER_NAME, ctx);
+      p.skip();
     },
   });
 
   if (shouldAddImport && wasWrapped) {
-    const wrapperImports = t.importDeclaration(
-      [
-        t.importSpecifier(
-          t.identifier("__rscWrapper"),
-          t.identifier("__rscWrapper")
-        ),
-      ],
-      t.stringLiteral("next-rsc-error-handler/src/wrapper.js")
-    );
-
-    ast.program.body.unshift(wrapperImports);
+    addImport(ast);
   }
 
   const output = generate.default(ast);
   return output.code;
+}
+
+function getFunctionName(p) {
+  if (p.isFunctionDeclaration()) {
+    return p.node.id?.name;
+  }
+
+  if (p.isArrowFunctionExpression()) {
+    const parent = p.parentPath;
+    if (parent.isVariableDeclarator() && parent.node.id.type === "Identifier") {
+      return parent.node.id.name;
+    }
+  }
+
+  return "unknown";
+}
+
+function addImport(ast) {
+  const wrapperImport = t.importDeclaration(
+    [t.importSpecifier(t.identifier(WRAPPER_NAME), t.identifier(WRAPPER_NAME))],
+    t.stringLiteral(WRAPPER_PATH)
+  );
+
+  ast.program.body.unshift(wrapperImport);
 }

@@ -10,11 +10,27 @@ export function __rscWrapper(fn, ctx) {
           Promise.resolve(result).catch((err) => {
             void capture(err, ctx);
           });
+
+          return result.catch(() => {
+            return (
+              // FIXME handle error.ts and make it optional
+              // That helps not to log errors in the console
+              <html>
+                <body></body>
+              </html>
+            );
+          });
         }
 
         return result;
       } catch (err) {
         void capture(err, ctx);
+
+        return (
+          <html>
+            <body></body>
+          </html>
+        );
         throw err;
       }
     },

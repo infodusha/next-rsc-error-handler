@@ -1,62 +1,45 @@
 import path from "node:path";
+import fs from "node:fs";
 
 import * as t from "@babel/types";
 
 export function getRelativePath(fullPath) {
-  const root = process.cwd();
-  const relativePath = path.relative(root, fullPath);
-  return relativePath;
+  return path.relative(process.cwd(), fullPath);
+}
+
+export function getExistingFilePath(pathPart, extensions) {
+  for (const ext of extensions) {
+    const fullPath = `${pathPart}.${ext}`;
+    if (fs.existsSync(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  throw new Error(`Unable to locate file at "${pathPart}"`);
 }
 
 export function isClientComponent(source) {
   return source.includes("__next_internal_client_entry_do_not_use__");
 }
 
-export function containsServerActions(source) {
-  return source.includes("createActionProxy");
-}
-
 /**
  * Return true if node is a function and returns jsx.
- * @param {Path} path
+ * @param {Path} p
  * @returns {boolean}
  */
-export function isReactElement(path) {
+export function isReactElement(p) {
   let isReactElement = false;
-  if (path.isFunctionDeclaration() || path.isArrowFunctionExpression()) {
-    isReactElement = isReturningJSXElement(path);
+  if (p.isFunctionDeclaration() || p.isArrowFunctionExpression()) {
+    isReactElement = isReturningJSXElement(p);
   }
 
   return isReactElement;
 }
 
 /**
- * Returns true if node is exported (named, not default), async, function or arrow function.
- * Important: Additionally we check if the "use server" directive is used.
- * i.e export async function myServerAction() {} or export const myServerAction = async () => {}
- */
-export function isServerAction(path) {
-  const isDeclaration =
-    path.isFunctionDeclaration() &&
-    path.node.async === true &&
-    path.parentPath?.isExportNamedDeclaration();
-
-  const isArrowFunction =
-    path.isArrowFunctionExpression() &&
-    path.node.async === true &&
-    path.parentPath?.isVariableDeclarator() &&
-    path.parentPath?.parentPath?.isVariableDeclaration() &&
-    path.parentPath?.parentPath?.parentPath?.isExportNamedDeclaration();
-
-  return (
-    (isDeclaration || isArrowFunction) && isReturningJSXElement(path) === false
-  );
-}
-
-/**
  * Wraps FunctionDeclaration or ArrowFunctionExpression with a function call with context.
  */
-export function wrapWithFunction(path, wrapFunctionName, context) {
+export function wrapWithFunction(p, wrapFunctionName, context) {
   // create a node from the options object
   const optionsExpression = t.objectExpression(
     Object.entries(context).map(([key, value]) => {
@@ -73,10 +56,10 @@ export function wrapWithFunction(path, wrapFunctionName, context) {
     })
   );
 
-  if (path.isArrowFunctionExpression()) {
-    return wrapArrowFunction(path, wrapFunctionName, optionsExpression);
-  } else if (path.isFunctionDeclaration()) {
-    return wrapFunctionDeclaration(path, wrapFunctionName, optionsExpression);
+  if (p.isArrowFunctionExpression()) {
+    return wrapArrowFunction(p, wrapFunctionName, optionsExpression);
+  } else if (p.isFunctionDeclaration()) {
+    return wrapFunctionDeclaration(p, wrapFunctionName, optionsExpression);
   } else {
     throw new Error("Only arrow functions are supported.");
   }
@@ -84,13 +67,13 @@ export function wrapWithFunction(path, wrapFunctionName, context) {
 
 /**
  * Helper function that returns true if node returns a JSX element.
- * @param {Path} path
+ * @param {Path} p
  * @returns {boolean}
  */
-function isReturningJSXElement(path) {
+function isReturningJSXElement(p) {
   let foundJSX = false;
 
-  path.traverse({
+  p.traverse({
     CallExpression(callPath) {
       if (foundJSX) {
         return;
@@ -99,10 +82,10 @@ function isReturningJSXElement(path) {
       const calleePath = callPath.get("callee");
       if (
         t.isIdentifier(calleePath.node) &&
-        (calleePath.node.name === "_jsx" || calleePath.node.name === "_jsxs")
+        ["_jsx", "_jsxs", "_jsxDEV", "_jsxsDEV"].includes(calleePath.node.name) // TODO: probably check if dev or prod vary on that
       ) {
         foundJSX = true;
-        path.skip();
+        p.skip();
       }
     },
   });
@@ -110,26 +93,26 @@ function isReturningJSXElement(path) {
   return foundJSX;
 }
 
-function wrapArrowFunction(path, wrapFunctionName, optionsNode) {
-  return path.replaceWith(
-    t.callExpression(t.identifier(wrapFunctionName), [path.node, optionsNode])
+function wrapArrowFunction(p, wrapFunctionName, optionsNode) {
+  return p.replaceWith(
+    t.callExpression(t.identifier(wrapFunctionName), [p.node, optionsNode])
   );
 }
 
-function wrapFunctionDeclaration(path, wrapFunctionName, argumentsExpression) {
+function wrapFunctionDeclaration(p, wrapFunctionName, argumentsExpression) {
   const expression = t.functionExpression(
     null,
-    path.node.params,
-    path.node.body,
-    path.node.generator,
-    path.node.async
+    p.node.params,
+    p.node.body,
+    p.node.generator,
+    p.node.async
   );
 
-  if (path.node.id == null) {
+  if (p.node.id == null) {
     throw new Error("FunctionDeclaration has no id.");
   }
 
-  const originalFunctionIdentifier = t.identifier(path.node.id.name);
+  const originalFunctionIdentifier = t.identifier(p.node.id.name);
   const wrappedFunction = t.variableDeclaration("var", [
     t.variableDeclarator(
       originalFunctionIdentifier,
@@ -140,12 +123,12 @@ function wrapFunctionDeclaration(path, wrapFunctionName, argumentsExpression) {
     ),
   ]);
 
-  if (path?.parentPath?.isExportDefaultDeclaration()) {
-    path.parentPath.replaceWithMultiple([
+  if (p?.parentPath?.isExportDefaultDeclaration()) {
+    p.parentPath.replaceWithMultiple([
       wrappedFunction,
       t.exportDefaultDeclaration(originalFunctionIdentifier),
     ]);
   } else {
-    path.replaceWith(wrappedFunction);
+    p.replaceWith(wrappedFunction);
   }
 }
