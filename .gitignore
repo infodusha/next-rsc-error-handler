@@ -1,0 +1,9 @@
+*.log
+npm-debug.log*
+/node_modules
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+
+/examples/general/.next

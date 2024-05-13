@@ -1,0 +1,30 @@
+{
+  "name": "next-rsc-error-handler",
+  "version": "0.0.1",
+  "description": "Webpack plugin that allow to handle RSC errors on the server side",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infodusha/next-rsc-error-handler.git"
+  },
+  "keywords": [
+    "next",
+    "rsc"
+  ],
+  "author": "infodusha",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/infodusha/next-rsc-error-handler/issues"
+  },
+  "homepage": "https://github.com/infodusha/next-rsc-error-handler#readme",
+  "dependencies": {
+    "@babel/generator": "^7.24.5",
+    "@babel/parser": "^7.24.5",
+    "@babel/traverse": "^7.24.5",
+    "@babel/types": "^7.24.5"
+  }
+}
