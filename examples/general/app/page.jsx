@@ -1,7 +1,7 @@
 import { Comp } from "./Comp";
 
 export default async function Page() {
-  // throw new Error("This is a Page error");
+  throw new Error("This is a Page error");
 
   return (
     <div>

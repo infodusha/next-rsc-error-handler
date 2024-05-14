@@ -13,7 +13,7 @@ import {
   getExistingFilePath,
 } from "./utils.js";
 
-const EXTENSIONS = ["js", "jsx", "ts", "tsx", "mjs", "mts"]; // TODO get extensions from next config
+const EXTENSIONS = ["js", "jsx", "ts", "tsx", "mjs", "mts", "cjs"]; // TODO get extensions from next config
 
 const WRAPPER_NAME = "__rscWrapper";
 const WRAPPER_PATH = "next-rsc-error-handler/src/wrapper.js";
@@ -62,6 +62,7 @@ export default function (source) {
       const ctx = {
         filePath: getRelativePath(resourcePath),
         functionName: getFunctionName(p),
+        globalHandler,
       };
 
       wasWrapped = true;

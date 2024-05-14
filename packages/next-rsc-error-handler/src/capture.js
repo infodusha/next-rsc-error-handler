@@ -1,3 +1,6 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
 
 export async function capture(error, ctx) {
@@ -9,9 +12,24 @@ export async function capture(error, ctx) {
     throw error;
   }
 
-  // TODO report
-  console.dir({ error });
+  console.dir({
+    ppp: [fileURLToPath(import.meta.url), ctx.globalHandler],
+  });
 
+  const globalHandlerPath = path.relative(
+    fileURLToPath(import.meta.url),
+    ctx.globalHandler
+  );
+
+  console.log({ globalHandlerPath });
+  // FIXME WTF??
+  const { default: globalHandler } = await import(
+    globalHandlerPath.replace("../", "")
+  );
+  // const globalHandler = await import(`${ctx.globalHandler}`);
+  globalHandler(error);
+
+  // TODO return a valid response?
   return (
     <html>
       <body>{error.message}</body>
