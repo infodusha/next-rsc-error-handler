@@ -1,6 +1,4 @@
-const defaultOptions = {
-  globalHandler: "global-server-error",
-};
+const defaultOptions = {};
 
 export function rscErrorHandler(options = {}) {
   return function withLoader(nextConfig = {}) {

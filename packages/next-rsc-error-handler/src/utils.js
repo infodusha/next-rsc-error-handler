@@ -1,21 +1,9 @@
 import path from "node:path";
-import fs from "node:fs";
 
 import * as t from "@babel/types";
 
 export function getRelativePath(fullPath) {
   return path.relative(process.cwd(), fullPath);
-}
-
-export function getExistingFilePath(pathPart, extensions) {
-  for (const ext of extensions) {
-    const fullPath = `${pathPart}.${ext}`;
-    if (fs.existsSync(fullPath)) {
-      return fullPath;
-    }
-  }
-
-  throw new Error(`Unable to locate file at "${pathPart}"`);
 }
 
 export function isClientComponent(source) {

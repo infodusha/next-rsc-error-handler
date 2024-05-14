@@ -1,5 +1,3 @@
-import path from "node:path";
-
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from "@babel/generator";
@@ -10,10 +8,7 @@ import {
   isClientComponent,
   isReactElement,
   wrapWithFunction,
-  getExistingFilePath,
 } from "./utils.js";
-
-const EXTENSIONS = ["js", "jsx", "ts", "tsx", "mjs", "mts", "cjs"]; // TODO get extensions from next config
 
 const WRAPPER_NAME = "__rscWrapper";
 const WRAPPER_PATH = "next-rsc-error-handler/src/wrapper.js";
@@ -27,12 +22,7 @@ export default function (source) {
 
   const resourcePath = this.resourcePath;
 
-  const globalHandler = getExistingFilePath(
-    path.resolve("app", options.globalHandler),
-    EXTENSIONS
-  );
-
-  this.addDependency(globalHandler);
+  this.addDependency("/app/global-server-error");
 
   const ast = parse(source, {
     sourceType: "module",
@@ -62,7 +52,6 @@ export default function (source) {
       const ctx = {
         filePath: getRelativePath(resourcePath),
         functionName: getFunctionName(p),
-        globalHandler,
       };
 
       wasWrapped = true;
