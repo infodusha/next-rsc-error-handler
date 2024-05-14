@@ -22,8 +22,6 @@ export default function (source) {
 
   const resourcePath = this.resourcePath;
 
-  this.addDependency("/global-server-error");
-
   const ast = parse(source, {
     sourceType: "module",
     plugins: ["typescript", "jsx"],
