@@ -1,4 +1,4 @@
-import { parse } from "@babel/parser";
+import parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from "@babel/generator";
 import * as t from "@babel/types";
@@ -11,7 +11,7 @@ import {
 } from "./utils.js";
 
 const WRAPPER_NAME = "__rscWrapper";
-const WRAPPER_PATH = "next-rsc-error-handler/src/wrapper.js";
+const WRAPPER_PATH = "next-rsc-error-handler/inserted/wrapper";
 
 export default function (source) {
   const options = this.getOptions();
@@ -22,7 +22,7 @@ export default function (source) {
 
   const resourcePath = this.resourcePath;
 
-  const ast = parse(source, {
+  const ast = parser.parse(source, {
     sourceType: "module",
     plugins: ["typescript", "jsx"],
   });

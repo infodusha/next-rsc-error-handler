@@ -6,7 +6,7 @@ export function rscErrorHandler(options = {}) {
       ...nextConfig,
       webpack(config, opts) {
         config.module.rules.unshift({
-          test: /\.(t|j)sx?$/, // TODO probably get extensions from next config ?
+          test: /\.(c|m)?(t|j)sx?$/,
           exclude: /\/(node_modules|packages\/next-rsc-error-handler)\//, // FIXME packages are only excluded for testing purposes
           use: [
             {

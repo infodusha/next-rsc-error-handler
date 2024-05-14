@@ -1,3 +1,4 @@
+import "server-only";
 import { capture } from "./capture.js";
 
 export function __rscWrapper(fn, ctx) {

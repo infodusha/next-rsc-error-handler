@@ -53,6 +53,11 @@ export function wrapWithFunction(p, wrapFunctionName, context) {
   }
 }
 
+const JSX_FN_NAMES =
+  process.env.NODE_ENV === "production"
+    ? ["_jsx", "_jsxs"]
+    : ["_jsxDEV", "_jsxsDEV"];
+
 /**
  * Helper function that returns true if node returns a JSX element.
  * @param {Path} p
@@ -70,7 +75,7 @@ function isReturningJSXElement(p) {
       const calleePath = callPath.get("callee");
       if (
         t.isIdentifier(calleePath.node) &&
-        ["_jsx", "_jsxs", "_jsxDEV", "_jsxsDEV"].includes(calleePath.node.name) // TODO: probably check if dev or prod vary on that
+        JSX_FN_NAMES.includes(calleePath.node.name)
       ) {
         foundJSX = true;
         p.skip();
