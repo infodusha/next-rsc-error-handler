@@ -22,7 +22,7 @@ export default function (source) {
 
   const resourcePath = this.resourcePath;
 
-  this.addDependency("/app/global-server-error");
+  this.addDependency("/global-server-error");
 
   const ast = parse(source, {
     sourceType: "module",

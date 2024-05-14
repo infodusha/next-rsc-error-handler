@@ -1,4 +1,5 @@
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
+import { default as globalHandler } from "/global-server-error";
 
 export async function capture(error, ctx) {
   if (
@@ -9,8 +10,7 @@ export async function capture(error, ctx) {
     throw error;
   }
 
-  const { default: globalHandler } = await import("/app/global-server-error");
-  globalHandler(error);
+  globalHandler(error, ctx);
 
   // TODO return a valid response?
   return (
