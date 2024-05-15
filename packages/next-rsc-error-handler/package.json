@@ -12,6 +12,10 @@
     "next",
     "rsc"
   ],
+  "files": [
+    "src/*",
+    "inserted/*"
+  ],
   "author": "infodusha",
   "license": "Apache-2.0",
   "bugs": {
