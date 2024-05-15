@@ -15,8 +15,6 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
-        with:
-          config-file: release-please-config.json
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v4
