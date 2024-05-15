@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Webpack plugin that allow to handle RSC errors on the server side",
   "main": "./src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "type": "module",
   "repository": {
     "type": "git",

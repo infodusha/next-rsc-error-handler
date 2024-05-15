@@ -1,9 +1,12 @@
-import { PHASE_PRODUCTION_BUILD } from "next/constants";
+import {
+  PHASE_PRODUCTION_BUILD,
+  PHASE_DEVELOPMENT_SERVER,
+} from "next/constants";
 import { default as globalHandler } from "/global-server-error";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { isNotFoundError } from "next/dist/client/components/not-found";
 
-export async function capture(error, ctx) {
+export async function capture(error, { options, ...ctx }) {
   if (
     isNotFoundError(error) ||
     isRedirectError(error) ||
@@ -12,12 +15,14 @@ export async function capture(error, ctx) {
     throw error;
   }
 
-  globalHandler(error, ctx);
+  const result = globalHandler(error, ctx);
 
-  // TODO return a valid response?
-  return (
-    <html>
-      <body>{error.message}</body>
-    </html>
-  );
+  if (
+    result !== undefined &&
+    process.env.NEXT_PHASE !== PHASE_DEVELOPMENT_SERVER
+  ) {
+    return result;
+  }
+
+  throw error;
 }

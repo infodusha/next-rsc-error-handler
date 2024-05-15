@@ -24,35 +24,6 @@ export function isReactElement(p) {
   return isReactElement;
 }
 
-/**
- * Wraps FunctionDeclaration or ArrowFunctionExpression with a function call with context.
- */
-export function wrapWithFunction(p, wrapFunctionName, context) {
-  // create a node from the options object
-  const optionsExpression = t.objectExpression(
-    Object.entries(context).map(([key, value]) => {
-      const literalValue =
-        typeof value === "string"
-          ? t.stringLiteral(value)
-          : typeof value === "boolean"
-          ? t.booleanLiteral(value)
-          : typeof value === "number"
-          ? t.numericLiteral(value)
-          : t.nullLiteral();
-
-      return t.objectProperty(t.identifier(key), literalValue);
-    })
-  );
-
-  if (p.isArrowFunctionExpression()) {
-    return wrapArrowFunction(p, wrapFunctionName, optionsExpression);
-  } else if (p.isFunctionDeclaration()) {
-    return wrapFunctionDeclaration(p, wrapFunctionName, optionsExpression);
-  } else {
-    throw new Error("Only arrow functions are supported.");
-  }
-}
-
 const JSX_FN_NAMES =
   process.env.NODE_ENV === "production"
     ? ["_jsx", "_jsxs"]
@@ -86,6 +57,49 @@ function isReturningJSXElement(p) {
   return foundJSX;
 }
 
+/**
+ * Wraps FunctionDeclaration or ArrowFunctionExpression with a function call with context.
+ */
+export function wrapWithFunction(p, wrapFunctionName, context) {
+  const optionsExpression = getOptionsExpressionLiteral(context);
+
+  if (p.isArrowFunctionExpression()) {
+    return wrapArrowFunction(p, wrapFunctionName, optionsExpression);
+  } else if (p.isFunctionDeclaration()) {
+    return wrapFunctionDeclaration(p, wrapFunctionName, optionsExpression);
+  } else {
+    throw new Error("Unsupported type of function");
+  }
+}
+
+function getOptionsExpression(obj) {
+  return t.objectExpression(
+    Object.entries(obj).map(([key, value]) =>
+      t.objectProperty(t.identifier(key), getOptionsExpressionLiteral(value))
+    )
+  );
+}
+
+function getOptionsExpressionLiteral(value) {
+  if (value === null) {
+    return t.nullLiteral();
+  }
+  switch (typeof value) {
+    case "undefined":
+      return t.identifier("undefined");
+    case "string":
+      return t.stringLiteral(value);
+    case "boolean":
+      return t.booleanLiteral(value);
+    case "number":
+      return t.numericLiteral(value);
+    case "object":
+      return getOptionsExpression(value);
+    default:
+      throw new Error(`Unsupported type of value: ${typeof value}`);
+  }
+}
+
 function wrapArrowFunction(p, wrapFunctionName, optionsNode) {
   return p.replaceWith(
     t.callExpression(t.identifier(wrapFunctionName), [p.node, optionsNode])
@@ -102,6 +116,7 @@ function wrapFunctionDeclaration(p, wrapFunctionName, argumentsExpression) {
   );
 
   if (p.node.id == null) {
+    // FIXME should work no matter if there is no function name
     throw new Error("FunctionDeclaration has no id.");
   }
 
@@ -116,7 +131,7 @@ function wrapFunctionDeclaration(p, wrapFunctionName, argumentsExpression) {
     ),
   ]);
 
-  if (p?.parentPath?.isExportDefaultDeclaration()) {
+  if (p.parentPath?.isExportDefaultDeclaration()) {
     p.parentPath.replaceWithMultiple([
       wrappedFunction,
       t.exportDefaultDeclaration(originalFunctionIdentifier),

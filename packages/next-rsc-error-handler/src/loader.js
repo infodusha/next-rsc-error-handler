@@ -50,6 +50,7 @@ export default function (source) {
       const ctx = {
         filePath: getRelativePath(resourcePath),
         functionName: getFunctionName(p),
+        options,
       };
 
       wasWrapped = true;
@@ -78,7 +79,7 @@ function getFunctionName(p) {
     }
   }
 
-  return "unknown";
+  return "(anonymous)";
 }
 
 function addImport(ast) {
