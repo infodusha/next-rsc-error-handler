@@ -26,6 +26,8 @@ export default function onGlobalServerError(err, ctx) {
 }
 ```
 
+Alternatively, you can use `global-server-error.ts` for file above.
+
 ## License
 
 [Apache-2.0](https://choosealicense.com/licenses/apache-2.0/)

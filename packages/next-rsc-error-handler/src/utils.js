@@ -38,18 +38,14 @@ function isReturningJSXElement(p) {
   let foundJSX = false;
 
   p.traverse({
-    CallExpression(callPath) {
-      if (foundJSX) {
-        return;
-      }
-
-      const calleePath = callPath.get("callee");
+    CallExpression(innerP) {
+      const calleePath = innerP.get("callee");
       if (
         t.isIdentifier(calleePath.node) &&
         JSX_FN_NAMES.includes(calleePath.node.name)
       ) {
         foundJSX = true;
-        p.skip();
+        innerP.stop();
       }
     },
   });

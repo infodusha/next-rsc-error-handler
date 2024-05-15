@@ -14,12 +14,11 @@ const WRAPPER_NAME = "__rscWrapper";
 const WRAPPER_PATH = "next-rsc-error-handler/inserted/wrapper";
 
 export default function (source) {
-  const options = this.getOptions();
-
   if (isClientComponent(source)) {
     return source;
   }
 
+  const options = this.getOptions();
   const resourcePath = this.resourcePath;
 
   const ast = parser.parse(source, {
@@ -27,18 +26,10 @@ export default function (source) {
     plugins: ["typescript", "jsx"],
   });
 
-  let shouldAddImport = true;
   let wasWrapped = false;
 
   traverse.default(ast, {
     enter(p) {
-      if (p.isImportDeclaration()) {
-        const importPath = p.node.source.value;
-        if (importPath.includes(WRAPPER_PATH)) {
-          shouldAddImport = false;
-        }
-      }
-
       if (!p.isFunctionDeclaration() && !p.isArrowFunctionExpression()) {
         return;
       }
@@ -55,11 +46,12 @@ export default function (source) {
 
       wasWrapped = true;
       wrapWithFunction(p, WRAPPER_NAME, ctx);
+
       p.skip();
     },
   });
 
-  if (shouldAddImport && wasWrapped) {
+  if (wasWrapped) {
     addImport(ast);
   }
 
