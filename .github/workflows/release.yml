@@ -17,7 +17,6 @@ jobs:
         id: release
         with:
           path: packages/next-rsc-error-handler
-          release-type: node
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v4
