@@ -1,3 +1,4 @@
 {
-  "packages/next-rsc-error-handler": "0.0.0"
+  "packages/next-rsc-error-handler": "0.0.0",
+  ".": "1.0.0"
 }
