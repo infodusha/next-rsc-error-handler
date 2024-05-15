@@ -9,6 +9,7 @@ export function rscErrorHandler(
 export interface GlobalServerErrorContext {
   filePath: string;
   functionName: string;
+  options: RscErrorHandlerOptions;
 }
 
 export type GlobalServerError = (
