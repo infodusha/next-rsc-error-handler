@@ -16,17 +16,18 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
+          path: packages/next-rsc-error-handler
           token: ${{ secrets.PAT }}
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22.x"
           registry-url: "https://registry.npmjs.org"
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.release_created }}
       - run: npm ci
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.release_created }}
       - run: cd packages/next-rsc-error-handler && npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.release_created }}
