@@ -1,10 +1,10 @@
 {
+  "extra-label": "release",
   "pull-request-title-pattern": "chore: release ${version}",
   "bump-minor-pre-major": true,
   "packages": {
-    ".": {
-      "package-name": "",
-      "include-component-in-tag": false
+    "packages/next-rsc-error-handler": {
+      "component": "next-rsc-error-handler"
     }
   }
 }
