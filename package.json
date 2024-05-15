@@ -9,5 +9,6 @@
   "workspaces": [
     "packages/*",
     "examples/*"
-  ]
+  ],
+  "version": "1.0.0"
 }
