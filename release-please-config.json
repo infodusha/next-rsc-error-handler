@@ -1,0 +1,6 @@
+{
+  "pull-request-title-pattern": "chore: release ${version}",
+  "packages": {
+    "packages/next-rsc-error-handler": {}
+  }
+}
