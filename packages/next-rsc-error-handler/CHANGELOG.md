@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.0...next-rsc-error-handler-v0.1.1) (2024-05-16)
+
+
+### Bug Fixes
+
+* swap readme ([1900919](https://github.com/infodusha/next-rsc-error-handler/commit/1900919ffe3117409c3279542b81d1e53e634161))
+* swap readme ([d81ef65](https://github.com/infodusha/next-rsc-error-handler/commit/d81ef65facb669a744c5cb82c7fc8b72f6c96e43))
+
 ## [0.1.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.0.3...next-rsc-error-handler-v0.1.0) (2024-05-16)
 
 
