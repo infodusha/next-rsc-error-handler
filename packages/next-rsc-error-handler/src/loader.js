@@ -19,8 +19,14 @@ export default function (source) {
     return source;
   }
 
-  const options = this.getOptions();
   const resourcePath = this.resourcePath;
+  const filePath = getRelativePath(resourcePath);
+
+  if (isRoute(filePath)) {
+    return source;
+  }
+
+  const options = this.getOptions();
 
   const ast = parser.parse(source, {
     sourceType: "module",
@@ -35,7 +41,7 @@ export default function (source) {
     }
 
     const ctx = {
-      filePath: getRelativePath(resourcePath),
+      filePath,
       componentName: functionName,
     };
     const optionsExpression = getOptionsExpressionLiteral(ctx);
@@ -63,6 +69,14 @@ export default function (source) {
 
   const output = generate.default(ast);
   return output.code;
+}
+
+function isInApp(resourcePath) {
+  return resourcePath.startsWith("app/") || resourcePath.startsWith("src/app/");
+}
+
+function isRoute(resourcePath) {
+  return isInApp(resourcePath) && /\/route\.(c|m)?(t|j)s$/.test(resourcePath);
 }
 
 function getArrowFunctionName(p) {
