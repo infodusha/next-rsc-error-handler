@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.2...next-rsc-error-handler-v0.1.3) (2024-05-16)
+
+
+### Bug Fixes
+
+* do not wrap in routes ([2a01a5e](https://github.com/infodusha/next-rsc-error-handler/commit/2a01a5ecf0a11bda15768e4eb4263e6bf4a3e1c3))
+
 ## [0.1.2](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.1...next-rsc-error-handler-v0.1.2) (2024-05-16)
 
 
