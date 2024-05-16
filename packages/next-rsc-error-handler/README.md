@@ -2,6 +2,8 @@
 
 Webpack plugin that allow to handle RSC errors on the server side.
 
+**This plugin requires all the client components to be marked with `'use client;'`**
+
 ## Get started
 
 - Install the dependency `npm i next-rsc-error-handler`
@@ -28,7 +30,15 @@ export default function onGlobalServerError(err, ctx) {
 }
 ```
 
-Alternatively, you can use `global-server-error.ts` for file above.
+Alternatively, you can use `global-server-error.ts` with:
+
+```typescript
+import { type GlobalServerErrorContext } from 'next-rsc-error-handler';
+
+export default function onGlobalServerError(err: unknown, ctx: GlobalServerErrorContext) {
+  // handling here
+}
+```
 
 ## License
 
