@@ -6,7 +6,7 @@ import { default as globalHandler } from "/global-server-error";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { isNotFoundError } from "next/dist/client/components/not-found";
 
-export async function capture(error, { options, ...ctx }) {
+export async function capture(error, ctx) {
   if (
     isNotFoundError(error) ||
     isRedirectError(error) ||
