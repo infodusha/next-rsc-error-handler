@@ -10,7 +10,9 @@ Webpack plugin that allow to handle RSC errors on the server side.
 ```javascript
 import { rscErrorHandler } from "next-rsc-error-handler";
 
-const withRscErrorHandler = rscErrorHandler();
+const withRscErrorHandler = rscErrorHandler({
+  componentName: /^_?[A-Z]/, // optional, defaults to /^[A-Z]/
+});
 
 export default withRscErrorHandler({
   // next config here

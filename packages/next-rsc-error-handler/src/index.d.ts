@@ -1,7 +1,7 @@
 import { NextConfig } from "next";
 
 export interface RscErrorHandlerOptions {
-  componentName: RegExp;
+  componentName?: RegExp;
 }
 
 export function rscErrorHandler(
