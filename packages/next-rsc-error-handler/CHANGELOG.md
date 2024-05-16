@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.1...next-rsc-error-handler-v0.1.2) (2024-05-16)
+
+
+### Bug Fixes
+
+* make component name optional & document it ([bca346f](https://github.com/infodusha/next-rsc-error-handler/commit/bca346f017e99d7459d2ec92d853122ac5a7e448))
+
 ## [0.1.1](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.0...next-rsc-error-handler-v0.1.1) (2024-05-16)
 
 
