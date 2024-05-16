@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.0.3...next-rsc-error-handler-v0.1.0) (2024-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* no need to omit options
+
+### Features
+
+* define component by name ([bfcd873](https://github.com/infodusha/next-rsc-error-handler/commit/bfcd873a4c8b8bad4a549d35d211f7663a50ab61))
+* no need to omit options ([c85ec22](https://github.com/infodusha/next-rsc-error-handler/commit/c85ec22b5bdd27c4dfeeb13414f0170bb33ad9a5))
+* refactor jsx detection ([cd9c559](https://github.com/infodusha/next-rsc-error-handler/commit/cd9c559a4e6e3c1338f3aee9422e5750b4de2936))
+
+
+### Bug Fixes
+
+* link readme ([8e5f089](https://github.com/infodusha/next-rsc-error-handler/commit/8e5f089031cdedec83e1b834c5cc177a30aaa6c5))
+
 ## [0.0.3](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.0.2...next-rsc-error-handler-v0.0.3) (2024-05-15)
 
 
