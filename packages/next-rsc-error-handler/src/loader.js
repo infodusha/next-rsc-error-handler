@@ -6,8 +6,9 @@ import * as t from "@babel/types";
 import {
   getRelativePath,
   isClientComponent,
-  isReactElement,
-  wrapWithFunction,
+  wrapFunctionDeclaration,
+  wrapArrowFunction,
+  getOptionsExpressionLiteral,
 } from "./utils.js";
 
 const WRAPPER_NAME = "__rscWrapper";
@@ -28,26 +29,31 @@ export default function (source) {
 
   let wasWrapped = false;
 
+  function wrapIfComponent(functionName, p, wrapFn) {
+    if (!options.componentName.test(functionName)) {
+      return;
+    }
+
+    const ctx = {
+      filePath: getRelativePath(resourcePath),
+      componentName: functionName,
+    };
+    const optionsExpression = getOptionsExpressionLiteral(ctx);
+
+    wasWrapped = true;
+
+    wrapFn(p, WRAPPER_NAME, optionsExpression);
+  }
+
   traverse.default(ast, {
-    enter(p) {
-      if (!p.isFunctionDeclaration() && !p.isArrowFunctionExpression()) {
-        return;
-      }
-
-      if (!isReactElement(p)) {
-        return;
-      }
-
-      const ctx = {
-        filePath: getRelativePath(resourcePath),
-        functionName: getFunctionName(p),
-        options,
-      };
-
-      wasWrapped = true;
-      wrapWithFunction(p, WRAPPER_NAME, ctx);
-
-      p.skip();
+    // TODO add FunctionExpression
+    FunctionDeclaration(p) {
+      const functionName = p.node.id?.name ?? "";
+      wrapIfComponent(functionName, p, wrapFunctionDeclaration);
+    },
+    ArrowFunctionExpression(p) {
+      const functionName = getArrowFunctionName(p);
+      wrapIfComponent(functionName, p, wrapArrowFunction);
     },
   });
 
@@ -59,19 +65,14 @@ export default function (source) {
   return output.code;
 }
 
-function getFunctionName(p) {
-  if (p.isFunctionDeclaration()) {
-    return p.node.id?.name;
-  }
-
+function getArrowFunctionName(p) {
   if (p.isArrowFunctionExpression()) {
     const parent = p.parentPath;
     if (parent.isVariableDeclarator() && parent.node.id.type === "Identifier") {
       return parent.node.id.name;
     }
   }
-
-  return "(anonymous)";
+  return "";
 }
 
 function addImport(ast) {

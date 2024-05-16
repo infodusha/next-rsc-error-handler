@@ -1,6 +1,8 @@
 import { NextConfig } from "next";
 
-export interface RscErrorHandlerOptions {}
+export interface RscErrorHandlerOptions {
+  componentName: RegExp;
+}
 
 export function rscErrorHandler(
   options: RscErrorHandlerOptions
@@ -8,8 +10,7 @@ export function rscErrorHandler(
 
 export interface GlobalServerErrorContext {
   filePath: string;
-  functionName: string;
-  options: RscErrorHandlerOptions;
+  componentName: string;
 }
 
 export type GlobalServerError = (

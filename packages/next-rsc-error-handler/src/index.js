@@ -1,4 +1,6 @@
-const defaultOptions = {};
+const defaultOptions = {
+  componentName: /^[A-Z]/,
+};
 
 export function rscErrorHandler(options = {}) {
   return function withLoader(nextConfig = {}) {
