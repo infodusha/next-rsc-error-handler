@@ -63,20 +63,24 @@ export default function (source) {
     },
   });
 
-  if (wasWrapped) {
-    addImport(ast);
+  if (!wasWrapped) {
+    return source;
   }
 
+  addImport(ast);
   const output = generate.default(ast);
+
   return output.code;
 }
 
 function isInApp(resourcePath) {
-  return resourcePath.startsWith("app/") || resourcePath.startsWith("src/app/");
+  return /^(src(\/|\\))?app(\/|\\)/.test(resourcePath);
 }
 
 function isRoute(resourcePath) {
-  return isInApp(resourcePath) && /\/route\.(c|m)?(t|j)s$/.test(resourcePath);
+  return (
+    isInApp(resourcePath) && /(\/|\\)route\.(c|m)?(t|j)s$/.test(resourcePath)
+  );
 }
 
 function getArrowFunctionName(p) {

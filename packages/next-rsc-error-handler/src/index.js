@@ -9,7 +9,7 @@ export function rscErrorHandler(options = {}) {
       webpack(config, opts) {
         config.module.rules.unshift({
           test: /\.(c|m)?(t|j)sx?$/,
-          exclude: /\/(node_modules\/|global-server-error\.)/,
+          exclude: /(\/|\\)(node_modules(\/|\\)|global-server-error\.)/,
           use: [
             {
               loader: "next-rsc-error-handler/src/loader.js",
