@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.3...next-rsc-error-handler-v0.1.4) (2024-05-17)
+
+
+### Bug Fixes
+
+* add windows support ([fb7e517](https://github.com/infodusha/next-rsc-error-handler/commit/fb7e517f3e628c2038f6f1aab6ca35cf15daf336))
+
 ## [0.1.3](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.2...next-rsc-error-handler-v0.1.3) (2024-05-16)
 
 
