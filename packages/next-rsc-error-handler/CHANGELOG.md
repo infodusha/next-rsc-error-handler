@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.4...next-rsc-error-handler-v0.2.0) (2024-05-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* always throw under development
+
+### Features
+
+* always throw under development ([7b44d63](https://github.com/infodusha/next-rsc-error-handler/commit/7b44d6373a610053753e890d53c5762462541520))
+
 ## [0.1.4](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.3...next-rsc-error-handler-v0.1.4) (2024-05-17)
 
 
