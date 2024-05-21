@@ -2,7 +2,7 @@
 
 Webpack plugin that allow to handle RSC errors on the server side.
 
-**This plugin does not allow dual client and server components**
+**This plugin does not allow to use dual client and server components**
 
 ## Get started
 
