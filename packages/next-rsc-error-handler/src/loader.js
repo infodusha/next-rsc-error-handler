@@ -26,29 +26,48 @@ export default function (source) {
     return source;
   }
 
+  const options = this.getOptions();
+
   const noExtRelativePath = dropExtension(relativePath);
   const isTrulyClientComponent = isClientComponent(source);
 
   if (isTrulyClientComponent || clientComponents.has(noExtRelativePath)) {
-    if (!isTrulyClientComponent && serverComponents.has(noExtRelativePath)) {
-      throw new Error(`${relativePath} is used on both client and server`);
-    }
-
     const ast = parser.parse(source, {
       sourceType: "module",
       plugins: ["typescript", "jsx"],
     });
 
+    let hasComponents = false;
+
     traverse.default(ast, {
       ImportDeclaration(p) {
         clientComponents.add(getImportRelativePath(resourcePath, p));
       },
+      // TODO add FunctionExpression
+      FunctionDeclaration(p) {
+        const functionName = p.node.id?.name ?? "";
+        if (options.componentName.test(functionName)) {
+          hasComponents = true;
+        }
+      },
+      ArrowFunctionExpression(p) {
+        const functionName = getArrowFunctionName(p);
+        if (options.componentName.test(functionName)) {
+          hasComponents = true;
+        }
+      },
     });
+
+    if (
+      hasComponents &&
+      !isTrulyClientComponent &&
+      serverComponents.has(noExtRelativePath)
+    ) {
+      throw new Error(`${relativePath} is used on both client and server`);
+    }
 
     return source;
   }
-
-  const options = this.getOptions();
 
   const ast = parser.parse(source, {
     sourceType: "module",
