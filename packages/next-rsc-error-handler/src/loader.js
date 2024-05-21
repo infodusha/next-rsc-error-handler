@@ -73,7 +73,6 @@ export default function (source) {
   });
 
   let wasWrapped = false;
-  let isClientOnly = false;
 
   function wrapIfComponent(functionName, p, wrapFn) {
     if (!options.componentName.test(functionName)) {
@@ -91,10 +90,6 @@ export default function (source) {
   }
 
   traverse.default(ast, {
-    ImportDeclaration(p) {
-      isClientOnly = p.node.source.value === "client-only";
-      p.stop();
-    },
     // TODO add FunctionExpression
     FunctionDeclaration(p) {
       const functionName = p.node.id?.name ?? "";
@@ -106,7 +101,7 @@ export default function (source) {
     },
   });
 
-  if (!wasWrapped || isClientOnly) {
+  if (!wasWrapped) {
     return source;
   }
 
