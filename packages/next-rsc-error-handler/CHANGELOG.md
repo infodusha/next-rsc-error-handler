@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.3.3...next-rsc-error-handler-v0.3.4) (2024-05-21)
+
+
+### Bug Fixes
+
+* simplify ([f89a508](https://github.com/infodusha/next-rsc-error-handler/commit/f89a508b101dd5797f1caf0a1d2de6d7c9dc00bd))
+
 ## [0.3.3](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.3.2...next-rsc-error-handler-v0.3.3) (2024-05-21)
 
 
