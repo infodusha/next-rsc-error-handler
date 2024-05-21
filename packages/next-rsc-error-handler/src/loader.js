@@ -16,7 +16,6 @@ const WRAPPER_NAME = "__rscWrapper";
 const WRAPPER_PATH = "next-rsc-error-handler/inserted/wrapper";
 
 const clientComponents = new Set();
-const serverComponents = new Set();
 
 export default function (source) {
   const resourcePath = this.resourcePath;
@@ -29,9 +28,8 @@ export default function (source) {
   const options = this.getOptions();
 
   const noExtRelativePath = dropExtension(relativePath);
-  const isTrulyClientComponent = isClientComponent(source);
 
-  if (isTrulyClientComponent || clientComponents.has(noExtRelativePath)) {
+  if (isClientComponent(source) || clientComponents.has(noExtRelativePath)) {
     const ast = parser.parse(source, {
       sourceType: "module",
       plugins: ["typescript", "jsx"],
@@ -48,22 +46,22 @@ export default function (source) {
         const functionName = p.node.id?.name ?? "";
         if (options.componentName.test(functionName)) {
           hasComponents = true;
+          p.stop();
         }
       },
       ArrowFunctionExpression(p) {
         const functionName = getArrowFunctionName(p);
         if (options.componentName.test(functionName)) {
           hasComponents = true;
+          p.stop();
         }
       },
     });
 
-    if (
-      hasComponents &&
-      !isTrulyClientComponent &&
-      serverComponents.has(noExtRelativePath)
-    ) {
-      throw new Error(`${relativePath} is used on both client and server`);
+    if (hasComponents) {
+      addClientOnlyImport(ast);
+      const output = generate.default(ast);
+      return output.code;
     }
 
     return source;
@@ -91,12 +89,7 @@ export default function (source) {
     wrapFn(p, WRAPPER_NAME, optionsExpression);
   }
 
-  const innerServerComponents = new Set();
-
   traverse.default(ast, {
-    ImportDeclaration(p) {
-      innerServerComponents.add(getImportRelativePath(resourcePath, p));
-    },
     // TODO add FunctionExpression
     FunctionDeclaration(p) {
       const functionName = p.node.id?.name ?? "";
@@ -112,11 +105,8 @@ export default function (source) {
     return source;
   }
 
-  innerServerComponents.forEach((c) => serverComponents.add(c));
-
   addImport(ast);
   const output = generate.default(ast);
-
   return output.code;
 }
 
@@ -147,6 +137,14 @@ function addImport(ast) {
   );
 
   ast.program.body.unshift(wrapperImport);
+}
+
+function addClientOnlyImport(ast) {
+  const clientOnlyImport = t.importDeclaration(
+    [],
+    t.stringLiteral("client-only")
+  );
+  ast.program.body.unshift(clientOnlyImport);
 }
 
 function dropExtension(relativePath) {
