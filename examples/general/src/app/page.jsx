@@ -1,6 +1,5 @@
 import { Comp } from "./Comp";
 import { Comp as Comp2 } from "./Comp";
-import { Inner } from "./Inner";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +23,6 @@ export default async function Page() {
       <Comp2 />
       {renderTest()}
       <ABC />
-      <Inner />
     </div>
   );
 }
