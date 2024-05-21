@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.2.0...next-rsc-error-handler-v0.3.0) (2024-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* do not require use client
+
+### Features
+
+* do not require use client ([1ddd254](https://github.com/infodusha/next-rsc-error-handler/commit/1ddd254c36890b5a6e32b03780d1d9c792e02752))
+
+
+### Bug Fixes
+
+* readme ([5344d27](https://github.com/infodusha/next-rsc-error-handler/commit/5344d27c4f2b21571e507ed764a89246c62141ef))
+
 ## [0.2.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.1.4...next-rsc-error-handler-v0.2.0) (2024-05-17)
 
 
