@@ -1,6 +1,6 @@
 {
   "name": "next-rsc-error-handler",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Webpack plugin that allow to handle RSC errors on the server side",
   "main": "./src/index.js",
   "type": "module",

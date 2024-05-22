@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.3.4...next-rsc-error-handler-v0.4.0) (2024-05-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* ts path alias support
+
+### Features
+
+* ts path alias support ([62f8a98](https://github.com/infodusha/next-rsc-error-handler/commit/62f8a98c8557a1d2d8e5490411fd29d4706d687f))
+
 ## [0.3.4](https://github.com/infodusha/next-rsc-error-handler/compare/next-rsc-error-handler-v0.3.3...next-rsc-error-handler-v0.3.4) (2024-05-21)
 
 
