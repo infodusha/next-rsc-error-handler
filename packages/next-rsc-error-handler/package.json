@@ -28,6 +28,7 @@
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
     "client-only": "^0.0.1",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "typescript": "~5.4.5"
   }
 }

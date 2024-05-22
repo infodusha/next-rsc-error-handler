@@ -2,7 +2,6 @@ import parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from "@babel/generator";
 import * as t from "@babel/types";
-import path from "node:path";
 
 import {
   getRelativePath,
@@ -11,6 +10,7 @@ import {
   wrapArrowFunction,
   getOptionsExpressionLiteral,
 } from "./utils.js";
+import { resolveTsAlias } from "./ts-path-alias.js";
 
 const WRAPPER_NAME = "__rscWrapper";
 const WRAPPER_PATH = "next-rsc-error-handler/inserted/wrapper";
@@ -37,9 +37,14 @@ export default function (source) {
 
     let hasComponents = false;
 
+    const getImportRelativePath = (p) => {
+      const val = resolveTsAlias(p.node.source.value);
+      return getRelativePath(this.utils.absolutify(this.context, val));
+    };
+
     traverse.default(ast, {
       ImportDeclaration(p) {
-        clientComponents.add(getImportRelativePath(resourcePath, p));
+        clientComponents.add(getImportRelativePath(p));
       },
       // TODO add FunctionExpression
       FunctionDeclaration(p) {
@@ -148,13 +153,5 @@ function addClientOnlyImport(ast) {
 }
 
 function dropExtension(relativePath) {
-  return relativePath.replace(/\.[^/.]+$/, "");
-}
-
-function getImportRelativePath(resourcePath, p) {
-  return dropExtension(
-    getRelativePath(
-      path.resolve(path.dirname(resourcePath), p.node.source.value)
-    )
-  );
+  return relativePath.replace(/\.[^\/.]+$/, "");
 }
